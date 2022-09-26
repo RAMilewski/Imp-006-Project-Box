@@ -25,7 +25,7 @@ include <BOSL2/std.scad>
 include <imp006_logos.scad>
 
 // The part you wish to print
-part = "usb";		//	[antenna, box, gnss, lid, logo, breadboard]      
+part = "box";		//	[antenna, box, gnss, lid, logo, breadboard]      
 
 use_usb = false;		// [true, false]  
 
@@ -45,7 +45,7 @@ $fn = 64;
 
 pcb_NEC = [2.5 * INCH * 2, 1.28 * INCH * 2, 0.062 * INCH];	// <NEC> Mythical PCB prototype.
 pcb	= [127, 60, 1.6];	 						            // <Measured>
-show_pcb = true;		// Set true to show blank pcb for debugging
+show_pcb = false;		// Set true to show blank pcb for debugging
 stackerZ = 8;			// Height of the box mating surface
 pcb_lift = 8;			// For battery space   
 pcb_headspace = parts_headspace - stackerZ + 7;      // Parts clearance above the board
@@ -67,8 +67,11 @@ grove_position1	= [-wall_iedge.x,  3 - box_shift.y, pcb_edge.z];
 grove_position2	= [grove_position1.x, grove_position1.y + grove_spacing, grove_position1.z];
 led_window	  	= [box_wall, 6, 5]; 
 led_window_position	= [wall_iedge.x - box_wall/4, 13.4 - box_shift.y - led_window.y/2, pcb_edge.z];
-usb = use_usb ? [box_wall+0.1, 8, 4.2] : [box_wall-0.6, 8, 4.2] ;
-usb_position	= [wall_iedge.x, -1 - box_shift.y,  pcb_edge.z];
+usb = [box_wall, 8, 4.2] ;
+usb_shift = use_usb ? 0 : box_wall/4;
+usb_position = [wall_iedge.x - usb_shift, -1 - box_shift.y,  pcb_edge.z];
+
+echo2([wall_iedge, usb, box_wall]);
 
 
 pcb_mount_hole_dwg = [-.120 * INCH, undef, 0.062 * INCH];	// Mounting hole from <NEC> PDF. 	
@@ -168,7 +171,7 @@ module walls() {
 				move(grove_position1)  cuboid(grove, anchor = BOT);
 				move(grove_position2)  cuboid(grove, anchor = BOT);
 			}
-			if (use_usb) move(usb_position) recolor("red") cuboid(usb, rounding = 0.2, anchor = BOT);
+			move(usb_position) recolor("red") cuboid(usb, rounding = 0.2, edges = "X", anchor = BOT);
 		}
 	}
 }
@@ -341,7 +344,7 @@ module mezzanine(headspace) { 	// Empty adjustable height stacking box to enclos
 
 module slice (side) {  // prints a box segment to verify wall hole location  
 						// function arguments are "usb" or "grove"
-	s = 260;
+	s = box.x+2;
 	front_half (s, y = pcb_edge.y) {
 		back_half(s, y = -pcb_edge.y) { 
 			top_half(s, z=box_wall/2) {
