@@ -20,9 +20,9 @@
 	The Origin of the coördinate space is the XY center of the board.
 	The USB connector overhangs the edge of the rev 4.0 PCB by ≈1.5 mm.
 */
+
 include <BOSL2/std.scad>
 include <imp006_logos.scad>
-
 
 // The part you wish to print
 part = "usb";		//	[antenna, box, gnss, lid, logo, breadboard]      
