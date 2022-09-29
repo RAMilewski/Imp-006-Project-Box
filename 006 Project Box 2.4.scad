@@ -6,7 +6,7 @@
    	
 	Version:                2.4
 	Creation Date:          30 July 2022
-	Modification Date:      26 Sept 2022
+	Modification Date:      28 Sept 2022
 	Email:                  richard+scad@milewski.org
 	Copyright				©2022 by Richard A. Milewski
     License - CC-BY-NC      https://creativecommons.org/licenses/by-nc/3.0/ 
@@ -25,9 +25,9 @@ include <BOSL2/std.scad>
 include <imp006_logos.scad>
 
 // The part you wish to print
-part = "box";		//	[antenna, box, gnss, lid, logo, breadboard]      
+part = "gnss";		//	[antenna, box, gnss, lid, logo, breadboard]      
 
-use_usb = false;		// [true, false]  
+use_usb = true;		// [true, false]  
 
 use_grove = true;	// [true, false]	
 
@@ -58,7 +58,7 @@ box = [pcb.x + 8.5 , pcb.y + 21, baseZ + pcb_lift + pcb_headspace]; // Note: box
 stacker = [box.x, box.y, stackerZ];								    //	 it does not include lid.z or stacker.z. 
 base = [box.x - box_wall * 1.1, box.y - box_wall * 1.1, baseZ];
 wall_iedge = [box.x/2-box_wall/2, box.y/2-box_wall/2];
-pcb_edge = [pcb.x/2, pcb.y/2, pcb_lift + pcb.z + box_wall];
+pcb_edge = [pcb.x/2, pcb.y/2, pcb_lift + pcb.z + base.z];
 
 // Holes in the box walls -- Fixed numbers are <Measured>...  or guessed at.
 grove 	  		= [box_wall+0.1, 10, 5];
@@ -66,10 +66,10 @@ grove_spacing	=  grove.y + 3;
 grove_position1	= [-wall_iedge.x,  3 - box_shift.y, pcb_edge.z];
 grove_position2	= [grove_position1.x, grove_position1.y + grove_spacing, grove_position1.z];
 led_window	  	= [box_wall, 6, 5]; 
-led_window_position	= [wall_iedge.x - box_wall/4, 13.4 - box_shift.y - led_window.y/2, pcb_edge.z];
+led_window_position	= [wall_iedge.x - box_wall/4, 12 - box_shift.y - led_window.y/2, pcb_edge.z];
 usb = [box_wall, 8, 4.2] ;
-usb_shift = use_usb ? 0 : box_wall/4;
-usb_position = [wall_iedge.x - usb_shift, -1 - box_shift.y,  pcb_edge.z];
+usb_shift = use_usb ? 0 : 0.35;
+usb_position = [wall_iedge.x - usb_shift, -3 - box_shift.y,  pcb_edge.z];
 
 echo2([wall_iedge, usb, box_wall]);
 
@@ -104,8 +104,8 @@ antenna_mount_position = [0, wall_iedge.y - antenna_mount.y/2, base.z];
 
 gnss = [25,25,6.5];
 gnss_mount = [32, 11, antenna_mount.z];
-gnss_offset = 35;
-gnss_slot = [25, 3, antenna_mount.z+1];
+gnss_offset = 30;
+gnss_slot = [25, 3.1, antenna_mount.z+1];
 gnss_slot_position = [gnss_offset - antenna_slot.x/2 + gnss_slot.x/2, antenna_slot_position.y - 5, base.z];
 gnss_mount_position = [gnss_offset - antenna_slot.x/2 + gnss_slot.x/2,wall_iedge.y - box_wall/2 - gnss_mount.y/2, base.z];
 gnss_height = 18;
@@ -131,13 +131,13 @@ if (part == "antenna") 		antenna();		// Mounting plate for antenna.
 if (part == "gnss") 		gnss_holder(); 	// GNSS antenna holder
 if (part == "breadboard")	breadboard(); 	// Mezzanine for 2 70x40mm breadboard pcb.s
 			
-
 // Test Prints
-	if (part == "frame") 	frame_test();	// Test of press-fit breadboard frame size
+	if (part == "frame") 	 frame_test();	// Test of press-fit breadboard frame size
+	if (part == "mezzanine") mezzanine(adjusted_headspace); // Mezzanine with solid floor
+
 // Clipped parts of the box to test wall hole locations 
-	if (part == "grove") 	slice("grove");	// Grove connector partial box
-	if (part == "usb") 		slice("usb");	// USB connector partial box
-	if (part == "mezzanine") mezzanine(adjusted_headspace);
+	if (part == "grove") slice("grove");	// Grove connector partial box
+	if (part == "usb") 	 slice("usb");	// USB connector partial box
 
 
 /*#################################################################################*\
@@ -166,10 +166,10 @@ module walls() {
 		rect_tube (size = [box.x, box.y], wall = box_wall, h = box.z, 
 			rounding = corner, irounding = icorner, anchor = BOT);
 		union() {
-			move(led_window_position) recolor("blue") cuboid(led_window, rounding = 1, edges = "X", anchor = BOT);
+			move(led_window_position) recolor("skyblue") cuboid(led_window, rounding = 1, edges = "X", anchor = BOT);
 			if (use_grove) {   
-				move(grove_position1)  cuboid(grove, anchor = BOT);
-				move(grove_position2)  cuboid(grove, anchor = BOT);
+				move(grove_position1)  recolor("green") cuboid(grove, anchor = BOT);
+				move(grove_position2)  recolor("green") cuboid(grove, anchor = BOT);
 			}
 			move(usb_position) recolor("red") cuboid(usb, rounding = 0.2, edges = "X", anchor = BOT);
 		}
@@ -281,18 +281,23 @@ module antenna() { cuboid (antenna_plate, edges = "Z", rounding = 3); }   // Cel
 
 module gnss_holder() {
 	
-	slot = gnss;
 	wall = gnss_slot.y-$slop;
 	lift = 5 + pcb_lift;
-	
-	cuboid ([lift + gnss.z + wall, gnss.y, wall], 				// Base
-		rounding = wall/2,  anchor = LEFT+BOT);
-	yrot(4) up(wall/2)
-		cuboid ([wall * 0.75, gnss.y-2, gnss.x-wall/2], 		// Top Clamp
-			rounding = wall/4, anchor = LEFT+BOT);
-	xmove(gnss.z + wall * 0.75) {
-		cuboid ([wall, gnss.y-2, gnss.x],						// Shelf 
-			rounding = wall/2, anchor = LEFT+BOT);
+	difference() {
+		union() {
+				cuboid ([lift + gnss.z + wall * 1.5, wall, gnss.x-1], // Base
+					rounding = wall/2,  edges = "Z", anchor = LEFT+BOT);
+			zrot(-3) right(wall/2.6)
+				cuboid ([wall * 0.75, gnss.y-2, gnss.x-1], 	// Top Clamp
+					rounding = wall/3, edges = "Z", anchor = FRONT+BOT);
+			xmove(gnss.z + wall * 1.25) {
+				cuboid ([wall, gnss.y-2, gnss.x-1],			// Shelf 
+					rounding = wall/2, edges = "Z", anchor = FRONT+BOT);
+			}
+		}
+		back(gnss.x*0.75) up(gnss.x/2) right(1.2) zrot(-3) xrot(-90) yrot(-90) zrot(90)
+			color("green") text3d("RESET", h = 2.5, size = 5, spacing = 1, 
+				font = "Avenir Next Condensed:style=Heavy",  anchor = str("baseline",BOT));
 	}
 }
 
@@ -345,15 +350,15 @@ module mezzanine(headspace) { 	// Empty adjustable height stacking box to enclos
 module slice (side) {  // prints a box segment to verify wall hole location  
 						// function arguments are "usb" or "grove"
 	s = box.x+2;
-	front_half (s, y = pcb_edge.y) {
-		back_half(s, y = -pcb_edge.y) { 
-			top_half(s, z=box_wall/2) {
-				bottom_half (s, z=pcb_edge.z+grove.z) {
+	front_half (s, y = pcb_edge.y+2) {
+		//back_half(s, y = -pcb_edge.y) { 
+			//top_half(s, z=box_wall/2) {
+				//bottom_half (s, z=pcb_edge.z+grove.z) {
 					if (side == "grove") left_half  (s, x=-49) box(); 
 					if (side == "usb")   right_half (s, x=49)  box(); 
-				}			
-			}
-		}
+				//}			
+			//}
+		//}
 	}
 }
 
