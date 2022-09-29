@@ -67,9 +67,9 @@ grove_position1	= [-wall_iedge.x,  3 - box_shift.y, pcb_edge.z];
 grove_position2	= [grove_position1.x, grove_position1.y + grove_spacing, grove_position1.z];
 led_window	  	= [box_wall, 6, 5]; 
 led_window_position	= [wall_iedge.x - box_wall/4, 12 - box_shift.y - led_window.y/2, pcb_edge.z];
-usb = [box_wall, 8, 4.2] ;
+usb = [box_wall, 8.5, 4.2] ;
 usb_shift = use_usb ? 0 : 0.35;
-usb_position = [wall_iedge.x - usb_shift, -3 - box_shift.y,  pcb_edge.z];
+usb_position = [wall_iedge.x - usb_shift, - 2 - box_shift.y,  pcb_edge.z];
 
 echo2([wall_iedge, usb, box_wall]);
 
