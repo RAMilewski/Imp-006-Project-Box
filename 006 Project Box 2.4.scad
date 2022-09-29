@@ -285,15 +285,14 @@ module gnss_holder() {
 	lift = 5 + pcb_lift;
 	difference() {
 		union() {
-				cuboid ([lift + gnss.z + wall * 1.5, wall, gnss.x-1], // Base
+				cuboid ([lift + gnss.z + wall * 1.5, wall, gnss.x - 0.5], // Base
 					rounding = wall/2,  edges = "Z", anchor = LEFT+BOT);
 			zrot(-3) right(wall/2.6)
-				cuboid ([wall * 0.75, gnss.y-2, gnss.x-1], 	// Top Clamp
+				cuboid ([wall * 0.75, gnss.y-2, gnss.x - 0.5], 	// Top Clamp
 					rounding = wall/3, edges = "Z", anchor = FRONT+BOT);
-			xmove(gnss.z + wall * 1.25) {
-				cuboid ([wall, gnss.y-2, gnss.x-1],			// Shelf 
+			xmove(gnss.z + wall * 1.25) 
+				cuboid ([wall, gnss.y-2, gnss.x - 0.5],			// Shelf 
 					rounding = wall/2, edges = "Z", anchor = FRONT+BOT);
-			}
 		}
 		back(gnss.x*0.75) up(gnss.x/2) right(1.2) zrot(-3) xrot(-90) yrot(-90) zrot(90)
 			color("green") text3d("RESET", h = 2.5, size = 5, spacing = 1, 
