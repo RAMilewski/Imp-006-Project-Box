@@ -3,7 +3,7 @@ Modular box for Electric Imp 006 breakout board and add-ons.
 
 The Imp006 breakout board offers world-class security and ubiquitous connectivity, including cellular data starting at $3 per month that can be turned off and on again to avoid connectivity charges.  It has GPS, Glonass, Galileo, Beidu/Compass, & QZSS positioning, as well as dual-band WiFi, and BLE networking.  i2c, Mikro Bus and 8 UART connections are available as well as a GPIO connector. See https://www.electricimp.com/imp006-breakout/ for full documentation.
 
-There are two different box lids available.  The two-piece lid that involves a color change, or a one-piece blank lid. All of the provided STLs print without supports. Proper rendering of the logo panel requires Comfortaa Bold a free Google typeface, and two Avenir fonts, Avenir Black Oblique and Avenir Next Condensed Heavy, both of which are available from multiple free online sources. Avenir Next Condensed Heavy is also use for the GNSS antenna holder.
+There are two different box lids available.  The two-piece lid that involves a color change, or a one-piece blank lid. All of the provided STLs print without supports. Proper rendering of the logo panel requires Comfortaa Bold a free Google typeface, and two Avenir fonts, Avenir Black Oblique and Next Condensed Heavy, both of which are available from multiple free online sources. Avenir Next Condensed Heavy is also used for the GNSS antenna holder.
 
 The box design acommodates the use of “mezzanine” expansion layers that stack between the box and the lid.  A mezzanine layer with prototyping breadboards is forthcoming.
 

@@ -25,7 +25,7 @@ include <BOSL2/std.scad>
 include <imp006_logos.scad>
 
 // The part you wish to print
-part = "gnss";		//	[antenna, box, gnss, lid, logo, breadboard]      
+part = "box";		//	[antenna, box, gnss, lid, logo, breadboard]      
 
 use_usb = true;		// [true, false]  
 
@@ -47,7 +47,7 @@ pcb_NEC = [2.5 * INCH * 2, 1.28 * INCH * 2, 0.062 * INCH];	// <NEC> Mythical PCB
 pcb	= [127, 60, 1.6];	 						            // <Measured>
 show_pcb = false;		// Set true to show blank pcb for debugging
 stackerZ = 8;			// Height of the box mating surface
-pcb_lift = 8;			// For battery space   
+pcb_lift = 11;			// For battery space   
 pcb_headspace = parts_headspace - stackerZ + 7;      // Parts clearance above the board
 
 box_shift = [0,6,0];	// Move the box, but keep the board centered on the origin.
@@ -60,6 +60,11 @@ base = [box.x - box_wall * 1.1, box.y - box_wall * 1.1, baseZ];
 wall_iedge = [box.x/2-box_wall/2, box.y/2-box_wall/2];
 pcb_edge = [pcb.x/2, pcb.y/2, pcb_lift + pcb.z + base.z];
 
+//Battery Cage
+batt = [56,34,9.4];
+cage_wall = 2;
+batt_position = [-15 - batt.x/2, pcb_edge.y - batt.y/2 - 15, base.z];
+
 // Holes in the box walls -- Fixed numbers are <Measured>...  or guessed at.
 grove 	  		= [box_wall+0.1, 10, 5];
 grove_spacing	=  grove.y + 3;
@@ -70,8 +75,6 @@ led_window_position	= [wall_iedge.x - box_wall/4, 12 - box_shift.y - led_window.
 usb = [box_wall, 8.5, 4.2] ;
 usb_shift = use_usb ? 0 : 0.35;
 usb_position = [wall_iedge.x - usb_shift, - 2 - box_shift.y,  pcb_edge.z];
-
-echo2([wall_iedge, usb, box_wall]);
 
 
 pcb_mount_hole_dwg = [-.120 * INCH, undef, 0.062 * INCH];	// Mounting hole from <NEC> PDF. 	
@@ -121,7 +124,6 @@ frame_wall = 1;
 
 
 
-
 /*####   Main   #################################################################*/
 
 if (part == "box") 			box();			// Box Bottom.
@@ -153,6 +155,7 @@ module box() {
 		color_this("magenta")   up(box.z) stacker(true);
 	}
 	color_this("lime")        stud_set();
+	color_this("magenta")     battery_cage();
 	color_this("deepskyblue") dummy_pcb();
 }
 	
@@ -202,6 +205,15 @@ module stud() {   // A single mounting stud.
 
 module stud_set() { 
 	grid2d(size = pcb_mount_spacing, spacing = pcb_mount_spacing) stud(); 
+}
+
+module battery_cage(){
+	move(batt_position){ 
+		difference() {
+			rect_tube(h = batt.z * 0.8, isize = [batt.x,batt.y], wall = cage_wall, anchor = LEFT+BOT);
+			move([batt.x, batt.y/2 + cage_wall/2, batt.z * 0.8]) cuboid(cage_wall, anchor = LEFT+UP);
+		}
+	}
 }
 
 module dummy_pcb() { // a blank plate the size and shape of the pc board.
