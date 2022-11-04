@@ -25,30 +25,30 @@ include <BOSL2/std.scad>
 include <imp006_logos.scad>
 
 // The part you wish to print
-part = "box";		//	[antenna, box, gnss, lid, logo, breadboard]      
+part = "box";		//	[antenna, box, gnss, lid, logo]      
 
-use_usb = true;		// [true, false]  
+use_usb = true;		//	[true, false]  
 
-use_grove = true;	// [true, false]	
+use_grove = true;	//	[true, false]	
 
 use_logo = true;	// true prints a top with a cut-out for a logo plate, 
 					// false prints a blank top
 
-parts_headspace = 10;       // [10:50]
+parts_headspace = 10;		// [10:50]
 
 $slop = 0.1;				// printer dependant clearance for nested parts.
 breadboard_fudge = [1,2];	// printer dependant fudge factor for press-fit of breadboard PCB
 
-module hidevars () {}  	// variables below hidden from Customizer
+module hidevars () {}  		// variables below hidden from Customizer
 
 $fn = 64;
 
 pcb_NEC = [2.5 * INCH * 2, 1.28 * INCH * 2, 0.062 * INCH];	// <NEC> Mythical PCB prototype.
-pcb	= [127, 60, 1.6];	 						            // <Measured>
+pcb	= [127, 60, 1.6];	// <Measured>
 show_pcb = false;		// Set true to show blank pcb for debugging
 stackerZ = 8;			// Height of the box mating surface
 pcb_lift = 11;			// For battery space   
-pcb_headspace = parts_headspace - stackerZ + 7;      // Parts clearance above the board
+pcb_headspace = parts_headspace - stackerZ + 7;		// Parts clearance above the board
 
 box_shift = [0,6,0];	// Move the box, but keep the board centered on the origin.
 						// makes room for antenna mounts
